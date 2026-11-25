@@ -36,16 +36,31 @@ class BookCover extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
-        child: book.coverAssetPath != null
-            ? Image.asset(
-                book.coverAssetPath!,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    _buildGeneratedCover(),
-              )
-            : _buildGeneratedCover(),
+        child: _buildCoverContent(),
       ),
     );
+  }
+
+  Widget _buildCoverContent() {
+    if (book.coverImageUrl != null && book.coverImageUrl!.isNotEmpty) {
+      return Image.network(
+        book.coverImageUrl!,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return _buildGeneratedCover();
+        },
+        errorBuilder: (context, error, stackTrace) => _buildGeneratedCover(),
+      );
+    }
+    if (book.coverAssetPath != null) {
+      return Image.asset(
+        book.coverAssetPath!,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => _buildGeneratedCover(),
+      );
+    }
+    return _buildGeneratedCover();
   }
 
   Widget _buildGeneratedCover() {

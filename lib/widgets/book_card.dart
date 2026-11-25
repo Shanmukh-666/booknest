@@ -139,9 +139,13 @@ class _BookCardState extends State<BookCard> {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            '${widget.book.pageCount}p',
+                            widget.book.pageCount > 0
+                                ? '${widget.book.pageCount}p'
+                                : widget.book.source.label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: AppTextStyles.caption(context).copyWith(
-                              fontSize: 11,
+                              fontSize: 10.5,
                             ),
                           ),
                         ),

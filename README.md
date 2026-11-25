@@ -2,13 +2,23 @@
 
 BookNest is a modern, responsive Flutter digital book library application with an editorial aesthetic. Users can explore a curated catalog of books, search and filter by genre, inspect book details, save favourites and bookmarks, and read multi-chapter sample editions with persistent reading progress.
 
-> **Note:** BookNest is a **100% frontend-only application**. All book catalog data and sample chapters come from local Dart data files, and user preferences (favourites, bookmarks, reading progress, theme, and reader font size) are persisted locally on the browser/device using `SharedPreferences`. No backend server, external database, or remote API is required.
+> **Note:** BookNest is a **100% frontend-only application** with no custom backend or external database. It integrates **Google Books API**, **Open Library API**, and **Gutendex (Project Gutenberg)** directly from the client, keeps a **28-book local sample catalog** as an offline fallback, and persists user preferences (favourites, bookmarks, reading progress, theme, and reader font size) locally on the browser/device using `SharedPreferences`.
 
 ---
 
 ## Live Website
 
 - **GitHub Pages:** https://Shanmukh-666.github.io/booknest/
+
+---
+
+## External Book API Integrations
+
+| API | Role | Documentation & Endpoint |
+|---|---|---|
+| **Google Books API** | Primary catalog search, descriptions, covers, categories, page counts, and preview links | [Docs](https://developers.google.com/books/docs/v1/using) • `https://www.googleapis.com/books/v1/volumes` |
+| **Open Library API** | Supplementary search, metadata, edition years, and cover images (deduplicated against Google Books) | [Docs](https://openlibrary.org/developers/api) • `https://openlibrary.org/search.json` |
+| **Gutendex / Project Gutenberg** | Free public-domain books, ebook formats, in-app text reading, and official reading links | [Docs](https://gutendex.com/) • `https://gutendex.com/books/` |
 
 ---
 
@@ -121,7 +131,9 @@ Deployment is automated via [`.github/workflows/deploy.yml`](.github/workflows/d
 
 ---
 
-## Limitations
+## Limitations & Browser CORS Notes
 
-- **Frontend-only:** No cloud sync, user accounts, or remote database; data is stored per browser/device in `SharedPreferences`.
-- **Sample Editions:** Books contain original multi-chapter sample editions rather than full copyrighted texts.
+- **Frontend-only:** No cloud sync, user accounts, or custom backend server; user data is stored per browser/device in `SharedPreferences`.
+- **Google Books Rate Limits:** Unauthenticated requests to `googleapis.com/books/v1/volumes` can occasionally return HTTP `429 Too Many Requests` on shared IPs. BookNest caches responses and automatically falls back to Open Library and the offline shelf.
+- **Project Gutenberg CORS:** While `gutendex.com` metadata and `covers.openlibrary.org` images support browser access, direct `.txt` downloads from `www.gutenberg.org` may be blocked by browser CORS or return `503` under load. When direct text fetch is unavailable in the browser, BookNest provides legitimate external reading links (`text/html`, `EPUB`, and Project Gutenberg book pages).
+- **Copyrighted Books:** BookNest never fabricates chapters for copyrighted books; Google Books and Open Library entries clearly distinguish official preview/info links from full public-domain texts.

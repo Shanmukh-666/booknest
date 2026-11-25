@@ -35,7 +35,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         crossAxisCount = 3;
       }
 
-      return CustomScrollView(
+      return Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1320),
+          child: CustomScrollView(
         slivers: [
           SliverPadding(
             padding: EdgeInsets.fromLTRB(horizontalPad, 20, horizontalPad, 16),
@@ -94,6 +98,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             ),
           ),
         ],
+      ),
+      ),
       );
     }
 
@@ -104,7 +110,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       catColumns = 2;
     }
 
-    return CustomScrollView(
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1320),
+        child: CustomScrollView(
       slivers: [
         SliverPadding(
           padding: EdgeInsets.fromLTRB(horizontalPad, 20, horizontalPad, 16),
@@ -150,6 +160,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           ),
         ),
       ],
+    ),
+    ),
     );
   }
 }

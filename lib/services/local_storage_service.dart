@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/book.dart';
 
 /// Persisted reading progress for a single book.
 class ReadingProgress {
@@ -41,6 +42,7 @@ class LocalStorageService {
   static const String _keyThemeMode = 'booknest_theme_mode';
   static const String _keyReaderFontSize = 'booknest_reader_font_size';
   static const String _keyReaderDark = 'booknest_reader_dark';
+  static const String _keySavedBooks = 'booknest_saved_api_books';
 
   final SharedPreferences _prefs;
 
@@ -104,5 +106,29 @@ class LocalStorageService {
 
   Future<void> saveReaderDark(bool isDark) =>
       _prefs.setBool(_keyReaderDark, isDark);
+
+  // Cached External API Books (for Favourites / Bookmarks / Progress persistence)
+  Map<String, Book> getSavedApiBooks() {
+    final raw = _prefs.getString(_keySavedBooks);
+    if (raw == null || raw.isEmpty) return {};
+    try {
+      final decoded = jsonDecode(raw) as Map<String, dynamic>;
+      return decoded.map(
+        (key, value) => MapEntry(
+          key,
+          Book.fromJson(value as Map<String, dynamic>),
+        ),
+      );
+    } catch (_) {
+      return {};
+    }
+  }
+
+  Future<void> saveApiBooks(Map<String, Book> books) {
+    final encoded = jsonEncode(
+      books.map((key, value) => MapEntry(key, value.toJson())),
+    );
+    return _prefs.setString(_keySavedBooks, encoded);
+  }
 }
 

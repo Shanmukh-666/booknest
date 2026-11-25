@@ -248,15 +248,25 @@ class _LibraryBookList extends StatelessWidget {
                           children: [
                             FilledButton.tonalIcon(
                               onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => ReaderScreen(
-                                      book: book,
-                                      initialChapterIndex:
-                                          progress?.chapterIndex ?? 0,
+                                if (book.hasInAppReadableChapters ||
+                                    book.fullTextUrl != null) {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => ReaderScreen(
+                                        book: book,
+                                        initialChapterIndex:
+                                            progress?.chapterIndex ?? 0,
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                } else {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          BookDetailsScreen(book: book),
+                                    ),
+                                  );
+                                }
                               },
                               icon: const Icon(
                                 Icons.menu_book_rounded,
@@ -265,21 +275,28 @@ class _LibraryBookList extends StatelessWidget {
                               label: Text(
                                 progress != null
                                     ? 'Continue Reading'
-                                    : 'Read Now',
+                                    : (book.hasInAppReadableChapters ||
+                                            book.fullTextUrl != null
+                                        ? 'Read Now'
+                                        : 'View Details'),
                               ),
                             ),
                             if (mode == _LibraryListMode.favourites)
                               TextButton.icon(
-                                onPressed: () =>
-                                    reading.toggleFavourite(book.id),
+                                onPressed: () => reading.toggleFavourite(
+                                  book.id,
+                                  book: book,
+                                ),
                                 icon: const Icon(Icons.delete_outline_rounded,
                                     size: 16),
                                 label: const Text('Remove'),
                               ),
                             if (mode == _LibraryListMode.bookmarks)
                               TextButton.icon(
-                                onPressed: () =>
-                                    reading.toggleBookmark(book.id),
+                                onPressed: () => reading.toggleBookmark(
+                                  book.id,
+                                  book: book,
+                                ),
                                 icon: const Icon(Icons.delete_outline_rounded,
                                     size: 16),
                                 label: const Text('Remove'),
